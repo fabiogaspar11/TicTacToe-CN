@@ -30,16 +30,7 @@ function refreshPage() {
 /////////////////////////////////////////////////////////////////////
 const captureButton = document.getElementById("capture-button");
 captureButton.addEventListener("click", function () {
-		html2canvas(document.body).then(function (canvas) {
-			canvas.toBlob(
-				function (blob) {
-					socket.emit("share", blob);
-					gameShared = true
-				},
-				"image/png",
-				1
-			);
-		});
+	
 });
 
 
@@ -242,8 +233,22 @@ function addLetterToScoreboard(letter) {
 	document.getElementById(letter + "Score").innerHTML = newScore;
 }
 
+function emitResults(result){
+	html2canvas(document.body).then(function (canvas) {
+		canvas.toBlob(
+			function (blob) {
+				socket.emit("save", blob, result);
+				gameShared = true
+			},
+			"image/png",
+			1
+		);
+	});
+}
+
 //Initializes things when the game ends
-function endGameInit() {
+function endGameInit(result) {
+	emitResults(result)
 	document.getElementById("turn").innerHTML = "";
 	createRematchButton();
 	canPlay = false;
@@ -286,15 +291,14 @@ socket.on("winnerDetermined", function (winner) {
 		document.getElementById("gameState").innerHTML = "You Lost...";
 	}
 
-	captureButton.removeAttribute("hidden");
-
 	addLetterToScoreboard(winner.winningLetter);
-	endGameInit();
+	endGameInit(winner.winningLetter);
 });
 
 socket.on("shareURL",  (data) => {
 	shareURL = data
 	showShareURL(shareURL)
+	captureButton.removeAttribute("hidden");
 });
 
 //Changes class of box based on the letter that is in it
@@ -308,7 +312,7 @@ function addClassByLetter(boxId, letter) {
 
 socket.on("tie", function () {
 	document.getElementById("gameState").innerHTML = "You tied";
-	endGameInit();
+	endGameInit("Tie");
 	addLetterToScoreboard("tie");
 });
 

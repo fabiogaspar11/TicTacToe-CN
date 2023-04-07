@@ -7,6 +7,13 @@ var uri = "database";
 const client = new MongoClient(`mongodb://${uri}:27017`);
 const messages_collection = client.db("TicTacToe").collection("messages");
 
+
+(async ()=>{
+	const chat = await messages_collection.find().toArray();
+	console.log(chat)
+})()
+
+
 const { Storage } = require("@google-cloud/storage");
 const { sign } = require("crypto");
 const storage = new Storage({
@@ -223,6 +230,7 @@ io.on("connection", function (socket) {
 			io.to(otherPlayer.id).emit("winnerDetermined", { youWon: false, winningLetter: player.letter });
 		});
 
+
 		socket.on("tie", function (roomId) {
 			io.to(gameRooms[roomId][0].id).emit("tie");
 			io.to(gameRooms[roomId][1].id).emit("tie");
@@ -239,7 +247,7 @@ io.on("connection", function (socket) {
 			io.to(movePlayed.player.id).emit("otherTurn");
 		});
 
-		socket.on("share", function (imageBlob) {
+		socket.on("save", function (imageBlob, result) {
 			let imageName = Date.now().toString();
 			const blob = bucket.file(imageName);
 
@@ -262,7 +270,8 @@ io.on("connection", function (socket) {
 					})
 					.then((signedUrls) => {
 						const publicUrl = signedUrls[0];
-						const obj = { text: publicUrl, timestamp: new Date() };
+						const obj = {score: result, text: publicUrl, timestamp: new Date() };
+						messages_collection.insertOne(obj);
 						socket.emit('shareURL', publicUrl);
 					})
 					.catch((err) => {
