@@ -70,6 +70,7 @@
 				<div id = "searchingText">
 					<div id = "roomId"></div>
 						<div id = "searchState">Searching for Opponent</div>
+						<div id="tableContainer"></div>
 				</div>
 				<form action = "/">
 					<div class = "menuBtnContainer">
@@ -80,6 +81,8 @@
 				</form>
 			</div>
 		</div>
+		
+
 		<script src = "/js/fastclick.js"></script>
         <script src = "/js/loading.js"></script>
 		<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -155,5 +158,35 @@ button:active {
   cursor: pointer;
 }
 
+.score-table {
+  border-collapse: collapse;
+  margin: 20px;
+  background-color: #f8f8f8;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
 
+.score-table th,
+.score-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.score-table th {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.score-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.score-table tr:hover {
+  background-color: #ddd;
+}
+
+.score-table {
+  margin: 0 auto;
+}
 </style>

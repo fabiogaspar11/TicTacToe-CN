@@ -157,6 +157,16 @@ randomGame = initStartValues();
 gameRooms = {};
 
 io.on("connection", function (socket) {
+
+	messages_collection
+    .find()
+    .sort({ _id: -1 })
+    .limit(5)
+    .toArray()
+    .then((scores) => {
+      io.emit("scoreHistory", scores);
+    });
+
 	//console.log("\nConnection")
 	socket.on("Gametype", (data) => {
 		data = data.split("=");
@@ -247,7 +257,7 @@ io.on("connection", function (socket) {
 			io.to(movePlayed.player.id).emit("otherTurn");
 		});
 
-		socket.on("save", function (imageBlob, result) {
+		socket.on("save", function (imageBlob, result, save) {
 			let imageName = Date.now().toString();
 			const blob = bucket.file(imageName);
 
@@ -270,8 +280,10 @@ io.on("connection", function (socket) {
 					})
 					.then((signedUrls) => {
 						const publicUrl = signedUrls[0];
-						const obj = {score: result, text: publicUrl, timestamp: new Date() };
-						messages_collection.insertOne(obj);
+						if(save){
+							const obj = {score: result, url: publicUrl, timestamp: new Date() };
+							messages_collection.insertOne(obj);
+						}
 						socket.emit('shareURL', publicUrl);
 					})
 					.catch((err) => {
