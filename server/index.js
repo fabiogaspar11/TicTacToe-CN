@@ -1,6 +1,20 @@
 const http = require("http");
 const server = http.createServer();
 const { Server } = require("socket.io");
+const { MongoClient } = require("mongodb");
+
+var uri = "database";
+const client = new MongoClient(`mongodb://${uri}:27017`);
+const messages_collection = client.db("TicTacToe").collection("messages");
+
+const { Storage } = require("@google-cloud/storage");
+const { sign } = require("crypto");
+const storage = new Storage({
+	projectId: "tictactoe-multiplayer-382914",
+	keyFilename: "./bucketKey.json",
+});
+const bucketName = "sharescores";
+const bucket = storage.bucket(bucketName);
 
 const io = new Server(server, {
 	cors: {
@@ -138,7 +152,8 @@ gameRooms = {};
 io.on("connection", function (socket) {
 	//console.log("\nConnection")
 	socket.on("Gametype", (data) => {
-		if (data == "random") {
+		data = data.split("=");
+		if (data[0] == "random") {
 			var joinInfo = {
 				id: socket.id,
 				roomId: randomGame.roomId,
@@ -160,7 +175,7 @@ io.on("connection", function (socket) {
 				io.to(randomGame.playerData[1].id).emit("gameStart");
 				randomGame = initStartValues();
 			}
-		} else if (data == "createPrivate") {
+		} else if (data[0] == "createPrivate") {
 			var privateGame = initStartValues();
 			var joinInfo = {
 				id: socket.id,
@@ -174,8 +189,8 @@ io.on("connection", function (socket) {
 			socket.emit("playersJoined", joinInfo);
 
 			gameRooms[privateGame.roomId] = [joinInfo];
-		} else if (data == "gameCode") {
-			var gameRoomId = Number(gameQuery.gameCode);
+		} else if (data[0] == "gameCode") {
+			var gameRoomId = Number(data[1]);
 			if (gameRooms[gameRoomId] == undefined) {
 				socket.emit("gameNotExist", gameRoomId);
 			} else {
@@ -216,8 +231,6 @@ io.on("connection", function (socket) {
 		socket.on("playedMove", function (movePlayed) {
 			var otherPlayer = getOtherPlayer(movePlayed.player);
 
-			var playerRoom = movePlayed.player.roomId;
-
 			info = {
 				boxPlayed: movePlayed.box,
 				letter: movePlayed.player.letter,
@@ -226,42 +239,73 @@ io.on("connection", function (socket) {
 			io.to(movePlayed.player.id).emit("otherTurn");
 		});
 
-		playersRematch = 0;
+		socket.on("share", function (imageBlob) {
+			let imageName = Date.now().toString();
+			const blob = bucket.file(imageName);
 
-		socket.on("restartGame", function (roomId) {
-			playersRematch++;
-			if (playersRematch == 2) {
-				newPlayerData = randomizePlayerTurn(gameRooms[roomId]);
-				io.to(gameRooms[roomId][0].id).emit("gameRestarted", newPlayerData[0]);
-				io.to(gameRooms[roomId][1].id).emit("gameRestarted", newPlayerData[1]);
-				playersRematch = 0;
-			}
+			const stream = blob.createWriteStream({
+				metadata: {
+					contentType: "image/png",
+				},
+			});
+
+			stream.on("error", (err) => {
+				console.error(err);
+			});
+
+			stream.on("finish", () => {
+				const file = bucket.file(imageName);
+				file
+					.getSignedUrl({
+						action: "read",
+						expires: "03-01-2500",
+					})
+					.then((signedUrls) => {
+						const publicUrl = signedUrls[0];
+						const obj = { text: publicUrl, timestamp: new Date() };
+						socket.emit('shareURL', publicUrl);
+					})
+					.catch((err) => {
+						console.error(err);
+					});
+			});
+			stream.end(imageBlob);
 		});
+	});
 
-		//////////////
-		//DISCONNECT//
-		//////////////
-		socket.on("disconnect", function () {
-			//console.log("\nDisconnect")
+	playersRematch = 0;
 
-			removePlayerFromRoom(socket.id);
+	socket.on("restartGame", function (roomId) {
+		playersRematch++;
+		if (playersRematch == 2) {
+			newPlayerData = randomizePlayerTurn(gameRooms[roomId]);
+			io.to(gameRooms[roomId][0].id).emit("gameRestarted", newPlayerData[0]);
+			io.to(gameRooms[roomId][1].id).emit("gameRestarted", newPlayerData[1]);
+			playersRematch = 0;
+		}
+	});
 
-			//This means the player is alone as he does not have a room
-			if (!findPlayerRoom(socket.id)) {
-				randomGame = initStartValues();
-			} else if (!(gameRooms[findPlayerRoom(socket.id)] == undefined)) {
-				if (!(gameRooms[findPlayerRoom(socket.id)].length == 1)) {
-					var otherPlayerInfo = findOtherPlayer(socket.id);
+	//////////////
+	//DISCONNECT//
+	//////////////
+	socket.on("disconnect", function () {
+		removePlayerFromRoom(socket.id);
 
-					if (otherPlayerInfo != null) {
-						var otherPlayer = getOtherPlayer(otherPlayerInfo);
-						if (otherPlayer) {
-							io.to(otherPlayer.id).emit("playerDisconnect");
-						}
+		//This means the player is alone as he does not have a room
+		if (!findPlayerRoom(socket.id)) {
+			randomGame = initStartValues();
+		} else if (!(gameRooms[findPlayerRoom(socket.id)] == undefined)) {
+			if (!(gameRooms[findPlayerRoom(socket.id)].length == 1)) {
+				var otherPlayerInfo = findOtherPlayer(socket.id);
+
+				if (otherPlayerInfo != null) {
+					var otherPlayer = getOtherPlayer(otherPlayerInfo);
+					if (otherPlayer) {
+						io.to(otherPlayer.id).emit("playerDisconnect");
 					}
 				}
 			}
-		});
+		}
 	});
 });
 

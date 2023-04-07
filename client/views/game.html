@@ -38,6 +38,14 @@
 				<div id = "player"></div>
 				<div id = "gameState"></div>
 				<div id = "turn"></div>
+				<button hidden id="capture-button">Share!</button>
+				<div id="modal" class="modal">
+					<div class="modal-content">
+					  <span class="close">&times;</span>
+					  <p id="modal-text">Some text here!</p>
+					</div>
+				  </div>
+
 			</div>
 			<table class = "table-bordered" id = "scoreBoard">
 				<tr>
@@ -74,7 +82,78 @@
 		</div>
 		<script src = "/js/fastclick.js"></script>
         <script src = "/js/loading.js"></script>
+		<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 		<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 		<script src = "/js/game.js"></script>
     </body>
 </html>
+<style>
+	button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  color: #fff;
+  background-color: #cda327;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+button:hover,
+button:focus {
+  background-color: #D6B656;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+}
+
+button:active {
+  background-color: #D6B656;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 1; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: rgba(0,0,0,0.4); 
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; 
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; 
+  max-height: 80%; /* set a max-height to limit the size of the popup */
+  overflow-y: auto; /* enable vertical scrolling for the content */
+}
+
+#modal-text {
+  font-size: 12px; /* reduce the font size */
+}
+
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+
+</style>

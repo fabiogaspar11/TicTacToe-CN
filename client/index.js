@@ -6,15 +6,6 @@ var bodyParser = require('body-parser')
 var app = express()
 const server = http.createServer(app)
 
-
-var gameType;
-function getGameType(gameQuery){
-	for (key in gameQuery){
-		gameType = key.toString()
-	}
-}
-
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(bodyParser.urlencoded({
@@ -28,8 +19,6 @@ app.get('/join', function(req, res){
 })
 
 app.get('/game', function(req, res){
-	gameQuery = req.query
-	getGameType(gameQuery)
 	res.sendFile(__dirname + '/views/game.html')
 })
 

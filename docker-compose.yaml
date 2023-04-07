@@ -9,5 +9,7 @@ services:
     build: client
     ports:
       - "8080:3000"
-  # database:
-  #   image: mongo
+  database:
+    image: mongo
+    ports:
+      - "27017:27017"
