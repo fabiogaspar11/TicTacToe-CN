@@ -17,7 +17,7 @@ terraform {
 }
 provider "docker" {}
 provider "google" {
-  #   credentials = file("auth.json")
+  credentials = file("auth.json")
   project = var.project_id
   region  = "europe-west2"
 }
@@ -31,15 +31,15 @@ resource "docker_image" "mongo" {
   keep_locally = false
 }
 
-# resource "google_container_registry_image" "client-image" {
-#   name         = "gcr.io/tictactoe-multiplayer-382914/client-image"
-#   image_tag    = "latest"
-# }
+resource "google_container_registry_image" "client-image" {
+  name         = "gcr.io/tictactoe-multiplayer-382914/client-image"
+  image_tag    = "latest"
+}
 
-# resource "google_container_registry_image" "server-image" {
-#   name         = "gcr.io/tictactoe-multiplayer-382914/server-image"
-#   image_tag    = "latest"
-# }
+resource "google_container_registry_image" "server-image" {
+  name         = "gcr.io/tictactoe-multiplayer-382914/server-image"
+  image_tag    = "latest"
+}
 
 resource "google_cloud_run_v2_service" "default" {
   name     = "cloudrun-service"
