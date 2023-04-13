@@ -8,7 +8,6 @@ COPY public public
 COPY views views 
 COPY index.js .
 
-COPY ./cmd.sh /docker-entrypoint.d/
-RUN chmod +x /docker-entrypoint.d/cmd.sh
+CMD ['find /usr/app -type f -print0 | xargs -0 sed -i "s|SERVER_URI|${SERVER_URI:-localhost}|g"'']
 
 ENTRYPOINT ["node","index.js"]
