@@ -80,12 +80,6 @@ function findOtherPlayer(playerId) {
 function getOtherPlayer(player) {
 	var playerData = gameRooms[player.roomId];
 
-	//console.log("\nGame Rooms:")
-	//console.log(gameRooms)
-
-	//console.log("\nRoom ID:")
-	//console.log(player.roomId)
-
 	var otherPlayer;
 
 	if (playerData[0].playerNumber == player.playerNumber) {
@@ -339,6 +333,6 @@ var ipaddress = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 //If you want to load on localhost onto a different port, change 4000 to whatever port you please
 var port = process.env.OPENSHIFT_NODEJS_PORT || 4000;
 
-server.listen(3000, () => {
+server.listen(process.env.PORT || 3000, () => {
 	console.log("Listening on *:3000");
 });

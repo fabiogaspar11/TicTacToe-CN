@@ -2,6 +2,8 @@ services:
   server:
     image: server-image
     build: server
+    environment:
+      - DATABASE_URI=database
     ports:
       - "3000:3000"
   client:
