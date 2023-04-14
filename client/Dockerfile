@@ -8,9 +8,6 @@ COPY public public
 COPY views views 
 COPY index.js .
 
-# COPY ./cmd.sh .
-# RUN chmod +x cmd.sh
-
-# CMD ./cmd.sh
+RUN find /usr/app -type f -print0 | xargs -0 sed -i "s|SERVER_URI|${SERVER_URI:-localhost}|g"
 
 ENTRYPOINT ["node","index.js"]
