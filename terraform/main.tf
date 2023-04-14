@@ -29,7 +29,7 @@ resource "google_cloud_run_v2_service" "server" {
 
   template {
     containers {
-      image = "gcr.io/tictactoe-multiplayer-382914/github.com/fabiogaspar11/tictactoe-multiplayer-server:d9353df0046502adbb648c40610ad68d20b6b1d9" 
+      image = "gcr.io/tictactoe-multiplayer-382914/github.com/fabiogaspar11/tictactoe-multiplayer-server:ab4a11b73f42faaf4933c78a550d8c2b60306538" 
     }
   }
 }
@@ -56,7 +56,7 @@ resource "google_cloud_run_v2_service" "client" {
 
   template {
     containers {
-      image = "gcr.io/tictactoe-multiplayer-382914/github.com/fabiogaspar11/tictactoe-multiplayer-client:d9353df0046502adbb648c40610ad68d20b6b1d9"
+      image = "gcr.io/tictactoe-multiplayer-382914/github.com/fabiogaspar11/tictactoe-multiplayer-client:ab4a11b73f42faaf4933c78a550d8c2b60306538"
       env {
         name = "SERVER_URI"
         value = google_cloud_run_v2_service.server.uri
