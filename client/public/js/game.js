@@ -1,4 +1,6 @@
 //Initializes variables
+console.log("dsadsadsad")
+console.log(process.env.SERVER_URI)
 var socket = io(`ws://${process.env.SERVER_URI}:3000`);
 
 playerData = null;
