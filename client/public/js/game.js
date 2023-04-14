@@ -1,5 +1,5 @@
 //Initializes variables
-var socket = io("ws://__SERVER_URI__:3000");
+var socket = io("__SERVER_URI__");
 
 playerData = null;
 yourTurn = null;
