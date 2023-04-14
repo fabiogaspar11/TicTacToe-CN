@@ -22,6 +22,19 @@ provider "google" {
 # }
 
 
+
+resource "google_cloud_run_v2_service" "server" {
+  name     = "cloudrun-service-server"
+  location = "us-central1"
+  ingress  = "INGRESS_TRAFFIC_ALL"
+
+  template {
+    containers {
+      image = "gcr.io/tictactoe-multiplayer-382914/github.com/fabiogaspar11/tictactoe-multiplayer-server:ace278cd80047f711dcee3fb69b84a36e4b10289" 
+    }
+  }
+}
+
 resource "google_cloud_run_v2_service" "client" {
   name     = "cloudrun-service-client"
   location = "us-central1"
@@ -32,20 +45,8 @@ resource "google_cloud_run_v2_service" "client" {
       image = "gcr.io/tictactoe-multiplayer-382914/github.com/fabiogaspar11/tictactoe-multiplayer-client:ace278cd80047f711dcee3fb69b84a36e4b10289"
       env {
         name = "SERVER_URI"
-        value = google_cloud_run_v2_service.server.uri
+        value = google_cloud_run_v2_service.server.id
       }
-    }
-  }
-}
-
-resource "google_cloud_run_v2_service" "server" {
-  name     = "cloudrun-service-server"
-  location = "us-central1"
-  ingress  = "INGRESS_TRAFFIC_ALL"
-
-  template {
-    containers {
-      image = "gcr.io/tictactoe-multiplayer-382914/github.com/fabiogaspar11/tictactoe-multiplayer-server:ace278cd80047f711dcee3fb69b84a36e4b10289" 
     }
   }
 }

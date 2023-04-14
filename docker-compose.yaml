@@ -1,17 +1,20 @@
 services:
   server:
-    image: server-image
+    image: server
     build: server
     environment:
       - DATABASE_URI=database
     ports:
       - "3000:3000"
-  client:
-    image: client-image
-    build: client
-    ports:
-      - "8080:3000"
   database:
     image: mongo
     ports:
       - "27017:27017"
+  client:
+    image: client
+    build: client
+    ports:
+      - "8080:3000"
+    depends_on:
+      - server
+      - database
