@@ -30,6 +30,4 @@ server.listen(process.env.PORT || 3000, ()=>{
 	console.log("Listening on *:3000")
 })
 
-console.log("ola")
-console.log(process.env.SERVER_URI)
 

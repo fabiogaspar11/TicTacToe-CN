@@ -8,7 +8,7 @@ COPY public public
 COPY views views 
 COPY index.js .
 
-COPY ./cmd.sh /docker-entrypoint.d/
-RUN chmod +x /docker-entrypoint.d/cmd.sh
+COPY ./cmd.sh .
+RUN chmod +x cmd.sh
 
-ENTRYPOINT ["node","index.js"]
+CMD ./cmd.sh && node index.js
