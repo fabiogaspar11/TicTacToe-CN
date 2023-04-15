@@ -3,16 +3,20 @@ const server = http.createServer();
 const { Server } = require("socket.io");
 const { MongoClient } = require("mongodb");
 
-var uri = "database";
-const client = new MongoClient(`mongodb://${uri}:27017`);
-const messages_collection = client.db("TicTacToe").collection("messages");
+const localUri = "database";
+// const atlasUri = "your-atlas-uri";
+// const messages_collection = client.db("TicTacToe").collection("messages");
 
+let ola=true
 
-(async ()=>{
-	const chat = await messages_collection.find().toArray();
-	console.log(chat)
-})()
+if (ola) {
+    uri = `mongodb://${localUri}:27017`;
+} else {
+    uri = `mongodb+srv://tictactoe:3Jtd4nOUS7Bz9no4@tictactoe.tl9ys90.mongodb.net/test`;
+}
 
+const client = new MongoClient(uri);
+let messages_collection = client.db("TicTacToe").collection("messages");
 
 const { Storage } = require("@google-cloud/storage");
 const { sign } = require("crypto");

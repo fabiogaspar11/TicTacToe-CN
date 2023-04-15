@@ -1,1 +1,1 @@
-find /usr/app -type f -print0 | xargs -0 sed -i "s|__SERVER_URI__|${SERVER_URI:-localhost}|g"
+find /usr/app -type f -print0 | xargs -0 sed -i "s|__SERVER_URI__|${SERVER_URI:-localhost:3000}|g"
