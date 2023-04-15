@@ -1,5 +1,8 @@
 //Initializes variables
-var socket = io("__SERVER_URI__");
+uri = "__SERVER_URI__"
+var socket = io(uri);
+
+let type = uri.startsWith("localhost") ? "local" : "remote"
 
 playerData = null;
 yourTurn = null;
@@ -301,7 +304,7 @@ function emitResults(result,save) {
   html2canvas(document.body).then(function (canvas) {
     canvas.toBlob(
       function (blob) {
-        socket.emit("save", blob, result, save);
+        socket.emit("save", blob, result, save, type);
         gameShared = true;
       },
       "image/png",
