@@ -21,7 +21,7 @@ variable "region" {
 }
 
 variable "bucket_name" {
- default = "sharescores"
+ default = "tictactoe-sharescores"
 }
 
 
