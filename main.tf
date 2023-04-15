@@ -11,15 +11,9 @@ terraform {
   }
 }
 
-provider "docker" {}
 provider "google" {
   project = var.project_id
   region  = "us-central1"
-}
-
-resource "docker_image" "mongo" {
-  name         = "mongo"
-  keep_locally = false
 }
 
 resource "google_cloud_run_v2_service" "server" {
@@ -30,20 +24,9 @@ resource "google_cloud_run_v2_service" "server" {
   template {
     containers {
       image = "gcr.io/tictactoe-multiplayer-382914/github.com/fabiogaspar11/tictactoe-multiplayer-server:latest" 
-    }
-  }
-}
-
-resource "google_cloud_run_v2_service" "database" {
-  name     = "database"
-  location = "us-central1"
-  ingress  = "INGRESS_TRAFFIC_ALL"
-
-  template {
-    containers {
-      image = "mongo:latest" 
-       ports {
-        container_port = 27017
+      env {
+        name = "DATABASE_URI"
+        value = var.database_uri
       }
     }
   }
@@ -78,13 +61,6 @@ resource "google_cloud_run_v2_service_iam_policy" "server_policy" {
   project     = google_cloud_run_v2_service.server.project
   location    = google_cloud_run_v2_service.server.location
   name        = google_cloud_run_v2_service.server.name
-  policy_data = data.google_iam_policy.public.policy_data
-}
-
-resource "google_cloud_run_v2_service_iam_policy" "database_policy" {
-  project     = google_cloud_run_v2_service.database.project
-  location    = google_cloud_run_v2_service.database.location
-  name        = google_cloud_run_v2_service.database.name
   policy_data = data.google_iam_policy.public.policy_data
 }
 

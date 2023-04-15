@@ -3,17 +3,8 @@ const server = http.createServer();
 const { Server } = require("socket.io");
 const { MongoClient } = require("mongodb");
 
-const localUri = "database";
-// const atlasUri = "your-atlas-uri";
-// const messages_collection = client.db("TicTacToe").collection("messages");
-
-let ola=true
-
-if (ola) {
-    uri = `mongodb://${localUri}:27017`;
-} else {
-    uri = `mongodb+srv://tictactoe:3Jtd4nOUS7Bz9no4@tictactoe.tl9ys90.mongodb.net/test`;
-}
+let isConStrComp = process.env.DATABASE_URI.startsWith("mongodb")
+uri = isConStrComp ? process.env.DATABASE_URI : `mongodb://${process.env.DATABASE_URI}:27017}`;
 
 const client = new MongoClient(uri);
 let messages_collection = client.db("TicTacToe").collection("messages");
