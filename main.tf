@@ -28,6 +28,10 @@ resource "google_cloud_run_v2_service" "server" {
         name = "DATABASE_URI"
         value = var.database_uri
       }
+      env {
+        name = "BUCKET_NAME"
+        value = var.bucket_name
+      }
     }
   }
 }
@@ -43,10 +47,6 @@ resource "google_cloud_run_v2_service" "client" {
       env {
         name = "SERVER_URI"
         value = google_cloud_run_v2_service.server.uri
-      }
-      env {
-        name = "BUCKET_NAME"
-        value = var.bucket_name
       }
     }
   }
