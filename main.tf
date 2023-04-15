@@ -13,17 +13,17 @@ terraform {
 
 provider "google" {
   project = var.project_id
-  region  = "us-central1"
+  region  = var.region
 }
 
 resource "google_cloud_run_v2_service" "server" {
   name     = "server"
-  location = "us-central1"
+  location = var.location
   ingress  = "INGRESS_TRAFFIC_ALL"
 
   template {
     containers {
-      image = "gcr.io/tictactoe-multiplayer-382914/github.com/fabiogaspar11/tictactoe-multiplayer-server:latest" 
+      image = "gcr.io/${var.project_id}/github.com/fabiogaspar11/tictactoe-multiplayer-server:latest" 
       env {
         name = "DATABASE_URI"
         value = var.database_uri
@@ -34,15 +34,19 @@ resource "google_cloud_run_v2_service" "server" {
 
 resource "google_cloud_run_v2_service" "client" {
   name     = "client"
-  location = "us-central1"
+  location = var.location
   ingress  = "INGRESS_TRAFFIC_ALL"
 
   template {
     containers {
-      image = "gcr.io/tictactoe-multiplayer-382914/github.com/fabiogaspar11/tictactoe-multiplayer-client:latest"
+      image = "gcr.io/${var.project_id}/github.com/fabiogaspar11/tictactoe-multiplayer-client:latest"
       env {
         name = "SERVER_URI"
         value = google_cloud_run_v2_service.server.uri
+      }
+      env {
+        name = "BUCKET_NAME"
+        value = var.bucket_name
       }
     }
   }
@@ -69,4 +73,10 @@ resource "google_cloud_run_v2_service_iam_policy" "client_policy" {
   location    = google_cloud_run_v2_service.client.location
   name        = google_cloud_run_v2_service.client.name
   policy_data = data.google_iam_policy.public.policy_data
+}
+
+resource "google_storage_bucket" "bucket" {
+  name          = var.bucket_name
+  location      = var.location
+  force_destroy = true
 }

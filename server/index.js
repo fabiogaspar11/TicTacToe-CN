@@ -19,11 +19,10 @@ let messages_collection = client.db("TicTacToe").collection("messages");
 const { Storage } = require("@google-cloud/storage");
 
 const storage = new Storage({
-  projectId: "tictactoe-multiplayer-382914",
   keyFilename: "./bucketKey.json",
 });
-const bucketName = "sharescores";
-const bucket = storage.bucket(bucketName);
+
+const bucket = storage.bucket(process.env.BUCKET_NAME);
 
 const io = new Server(server, {
   cors: {
