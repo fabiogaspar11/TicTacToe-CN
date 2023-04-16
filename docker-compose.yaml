@@ -4,7 +4,7 @@ services:
     build: server
     environment:
       - DATABASE_URI=database
-      - BUCKET_NAME=sharescores
+      - BUCKET_NAME=tictactoe-sharescores-dev
     ports:
       - "3000:3000"
   database:

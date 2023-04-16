@@ -2,7 +2,6 @@
 uri = "__SERVER_URI__"
 var socket = io(uri);
 
-let type = uri.startsWith("localhost") ? "local" : "remote"
 
 playerData = null;
 yourTurn = null;
@@ -304,7 +303,7 @@ function emitResults(result,save) {
   html2canvas(document.body).then(function (canvas) {
     canvas.toBlob(
       function (blob) {
-        socket.emit("save", blob, result, save, type);
+        socket.emit("save", blob, result, save);
         gameShared = true;
       },
       "image/png",

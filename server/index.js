@@ -256,52 +256,44 @@ io.on("connection", function (socket) {
       io.to(movePlayed.player.id).emit("otherTurn");
     });
 
-    socket.on("save", function (imageBlob, result, save, type) {
-      if (type == "local") {
-        const obj = {
-          score: result,
-          timestamp: new Date(),
-        };
-        messages_collection.insertOne(obj);
-      } else {
-        let imageName = Date.now().toString();
-        const blob = bucket.file(imageName);
+    socket.on("save", function (imageBlob, result, save) {
+      let imageName = Date.now().toString();
+      const blob = bucket.file(imageName);
 
-        const stream = blob.createWriteStream({
-          metadata: {
-            contentType: "image/png",
-          },
-        });
+      const stream = blob.createWriteStream({
+        metadata: {
+          contentType: "image/png",
+        },
+      });
 
-        stream.on("error", (err) => {
-          console.error(err);
-        });
+      stream.on("error", (err) => {
+        console.error(err);
+      });
 
-        stream.on("finish", () => {
-          const file = bucket.file(imageName);
-          file
-            .getSignedUrl({
-              action: "read",
-              expires: "03-01-2500",
-            })
-            .then((signedUrls) => {
-              const publicUrl = signedUrls[0];
-              if (save) {
-                const obj = {
-                  score: result,
-                  url: publicUrl,
-                  timestamp: new Date(),
-                };
-                messages_collection.insertOne(obj);
-              }
-              socket.emit("shareURL", publicUrl);
-            })
-            .catch((err) => {
-              console.error(err);
-            });
-        });
-        stream.end(imageBlob);
-      }
+      stream.on("finish", () => {
+        const file = bucket.file(imageName);
+        file
+          .getSignedUrl({
+            action: "read",
+            expires: "03-01-2500",
+          })
+          .then((signedUrls) => {
+            const publicUrl = signedUrls[0];
+            if (save) {
+              const obj = {
+                score: result,
+                url: publicUrl,
+                timestamp: new Date(),
+              };
+              messages_collection.insertOne(obj);
+            }
+            socket.emit("shareURL", publicUrl);
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      });
+      stream.end(imageBlob);
     });
   });
 

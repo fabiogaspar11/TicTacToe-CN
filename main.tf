@@ -1,4 +1,11 @@
 terraform {
+   cloud {
+    organization = "fabiocordeirogaspar"
+
+    workspaces {
+      name = "TicTacToe"
+    }
+  }
   required_providers {
     docker = {
       source  = "kreuzwerker/docker"
@@ -12,6 +19,7 @@ terraform {
 }
 
 provider "google" {
+  credentials = file("./googleKey.json")
   project = var.project_id
   region  = var.region
 }
