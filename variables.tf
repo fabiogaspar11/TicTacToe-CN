@@ -9,7 +9,7 @@ variable "project_id" {
 }
 
 variable "database_uri" {
- default = "mongodb+srv://tictactoe:U7IeBTE1ILz1A5VG@tictactoe.psbwmks.mongodb.net/test"
+ default = "mongodb+srv://tictactoe:ScdTn4yPZGO0UL9o@tictactoe.6psbeli.mongodb.net/test"
 }
 
 variable "location" {
