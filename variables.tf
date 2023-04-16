@@ -5,11 +5,11 @@ variable "external_port" {
 }
 
 variable "project_id" {
- default = "tictactoe-multiplayer-382914"
+ default = ""
 }
 
 variable "database_uri" {
- default = "mongodb+srv://tictactoe:ScdTn4yPZGO0UL9o@tictactoe.6psbeli.mongodb.net/test"
+ default = "database_uri"
 }
 
 variable "location" {
@@ -21,7 +21,7 @@ variable "region" {
 }
 
 variable "bucket_name" {
- default = "tictactoe-sharescores"
+ default = "bucket_name"
 }
 
 
