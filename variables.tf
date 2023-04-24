@@ -4,13 +4,11 @@ variable "external_port" {
  default = 8080
 }
 
-variable "project_id" {
- default = "project_id"
-}
+variable "project_id" {}
 
-variable "database_uri" {
- default = "database_uri"
-}
+variable "database_uri" {}
+
+variable "bucket_name" {}
 
 variable "location" {
  default = "us-central1"
@@ -19,10 +17,3 @@ variable "location" {
 variable "region" {
  default = "us-central1"
 }
-
-variable "bucket_name" {
- default = "bucket_name"
-}
-
-
-
