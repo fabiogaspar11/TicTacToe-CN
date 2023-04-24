@@ -5,7 +5,7 @@ variable "external_port" {
 }
 
 variable "project_id" {
- default = ""
+ default = "project_id"
 }
 
 variable "database_uri" {
